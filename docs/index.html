@@ -1,0 +1,995 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>your-design-worker — a visual-asset Claude worker, ICM-structured, fork-ready</title>
+  <meta name="description" content="An open-source visual-asset worker built on ICM principles. Brief in, self-contained HTML artifacts out — social cards, OG cards, preview pages, diagrams. Palette-configurable. MIT licensed.">
+
+  <meta property="og:title" content="your-design-worker">
+  <meta property="og:description" content="A visual-asset Claude worker, ICM-structured, fork-ready.">
+  <meta property="og:type" content="website">
+  <!-- TODO: og-image.png delivered by design worker in follow-up dispatch -->
+  <meta property="og:image" content="og-image.png">
+
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="your-design-worker">
+  <meta name="twitter:description" content="A visual-asset Claude worker, ICM-structured, fork-ready.">
+
+  <style>
+    :root {
+      --bg: #f6f5f0;
+      --ink: #111111;
+      --muted: #6a6862;
+      --soft-muted: #908d85;
+      --accent-warm: #ff5436;
+      --accent-cool: #1f4dff;
+      --rule: #d8d4c8;
+      --surface: #ecebd6;
+      --surface-deep: #1a1a18;
+      --inset-ink: #f2efe4;
+      --max: 1120px;
+      --sans: system-ui, "Inter", "Helvetica Neue", Arial, sans-serif;
+      --mono: ui-monospace, "SF Mono", "JetBrains Mono", Menlo, Consolas, monospace;
+    }
+
+    * { box-sizing: border-box; }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      margin: 0;
+      font-family: var(--sans);
+      font-size: 16px;
+      line-height: 1.55;
+      color: var(--ink);
+      background: var(--bg);
+      -webkit-font-smoothing: antialiased;
+      -moz-osx-font-smoothing: grayscale;
+    }
+
+    a {
+      color: var(--ink);
+      text-decoration: underline;
+      text-decoration-thickness: 1px;
+      text-underline-offset: 0.2em;
+    }
+
+    a:hover {
+      color: var(--accent-warm);
+      text-decoration-color: var(--accent-warm);
+    }
+
+    code {
+      font-family: var(--mono);
+      font-size: 0.875em;
+      background: var(--surface);
+      padding: 0.08em 0.4em;
+      letter-spacing: 0;
+    }
+
+    /* === NAV === */
+    nav.top {
+      position: sticky;
+      top: 0;
+      z-index: 10;
+      background: rgba(246, 245, 240, 0.94);
+      backdrop-filter: saturate(180%) blur(8px);
+      -webkit-backdrop-filter: saturate(180%) blur(8px);
+      border-bottom: 1px solid var(--rule);
+    }
+    nav.top .nav-inner {
+      max-width: var(--max);
+      margin: 0 auto;
+      padding: 14px 32px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 24px;
+    }
+    nav.top .brand {
+      font-family: var(--sans);
+      font-weight: 700;
+      font-size: 15px;
+      letter-spacing: -0.012em;
+      color: var(--ink);
+      text-decoration: none;
+    }
+    nav.top .brand .dot {
+      display: inline-block;
+      width: 8px;
+      height: 8px;
+      background: var(--accent-warm);
+      vertical-align: 0.05em;
+      margin-left: 6px;
+    }
+    nav.top ul {
+      list-style: none;
+      padding: 0;
+      margin: 0;
+      display: flex;
+      gap: 24px;
+      align-items: center;
+      font-family: var(--mono);
+      font-size: 12px;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+    }
+    nav.top ul a {
+      color: var(--muted);
+      text-decoration: none;
+    }
+    nav.top ul a:hover { color: var(--ink); }
+    nav.top .cta {
+      color: var(--accent-warm);
+      text-decoration: none;
+      font-weight: 600;
+      border: 1px solid var(--accent-warm);
+      padding: 7px 12px;
+    }
+    nav.top .cta:hover {
+      background: var(--accent-warm);
+      color: var(--bg);
+    }
+
+    /* === MAIN === */
+    main {
+      max-width: var(--max);
+      margin: 0 auto;
+      padding: 0 32px;
+    }
+
+    /* === HERO === */
+    .hero {
+      padding: 80px 0 64px;
+      position: relative;
+    }
+    /* faint 12-col grid in hero */
+    .hero .grid {
+      position: absolute;
+      top: 80px;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      pointer-events: none;
+      display: grid;
+      grid-template-columns: repeat(12, 1fr);
+    }
+    .hero .grid span {
+      border-left: 1px solid var(--rule);
+    }
+    .hero .grid span:first-child { border-left-color: transparent; }
+    .hero > * { position: relative; z-index: 1; }
+
+    .specimen-label {
+      font-family: var(--mono);
+      font-size: 12px;
+      letter-spacing: 0.18em;
+      color: var(--accent-warm);
+      font-weight: 600;
+      text-transform: uppercase;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin: 0 0 24px;
+    }
+    .specimen-label .num {
+      color: var(--muted);
+      font-weight: 400;
+    }
+    .specimen-label .rule {
+      flex: 0 0 32px;
+      height: 1px;
+      background: var(--accent-warm);
+    }
+
+    .hero h1 {
+      font-family: var(--sans);
+      font-size: clamp(40px, 6.4vw, 80px);
+      line-height: 1.0;
+      font-weight: 800;
+      letter-spacing: -0.028em;
+      margin: 0 0 28px;
+      color: var(--ink);
+      max-width: 16ch;
+    }
+    .hero h1 .warm { color: var(--accent-warm); }
+
+    .hero .standfirst {
+      font-size: 19px;
+      line-height: 1.55;
+      color: var(--muted);
+      max-width: 56ch;
+      margin: 0 0 36px;
+    }
+
+    .hero .cta-row {
+      display: flex;
+      gap: 16px;
+      align-items: center;
+      flex-wrap: wrap;
+    }
+    .hero .cta-primary {
+      display: inline-block;
+      background: var(--ink);
+      color: var(--bg);
+      text-decoration: none;
+      padding: 14px 22px;
+      font-family: var(--mono);
+      font-weight: 600;
+      font-size: 13px;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      border: 1px solid var(--ink);
+    }
+    .hero .cta-primary:hover {
+      background: var(--accent-warm);
+      border-color: var(--accent-warm);
+      color: var(--bg);
+    }
+    .hero .cta-secondary {
+      font-family: var(--mono);
+      font-weight: 600;
+      font-size: 13px;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--ink);
+      text-decoration: none;
+      padding: 14px 6px;
+    }
+    .hero .cta-secondary::after {
+      content: " →";
+      color: var(--accent-warm);
+    }
+    .hero .cta-secondary:hover { color: var(--accent-warm); }
+
+    /* === HERO SWATCH ROW === */
+    .hero-swatches {
+      display: grid;
+      grid-template-columns: repeat(6, 1fr);
+      gap: 16px;
+      margin: 56px 0 0;
+      padding-top: 32px;
+      border-top: 1px solid var(--rule);
+    }
+    @media (max-width: 720px) {
+      .hero-swatches { grid-template-columns: repeat(3, 1fr); }
+    }
+    .swatch {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+    .swatch .chip {
+      height: 88px;
+      border: 1px solid var(--rule);
+    }
+    .swatch .chip.c-bg { background: var(--bg); }
+    .swatch .chip.c-ink { background: var(--ink); }
+    .swatch .chip.c-muted { background: var(--muted); }
+    .swatch .chip.c-warm { background: var(--accent-warm); }
+    .swatch .chip.c-cool { background: var(--accent-cool); }
+    .swatch .chip.c-rule { background: var(--rule); }
+    .swatch .hex {
+      font-family: var(--mono);
+      font-size: 12px;
+      font-weight: 600;
+      color: var(--ink);
+    }
+    .swatch .token {
+      font-family: var(--mono);
+      font-size: 11px;
+      letter-spacing: 0.04em;
+      color: var(--muted);
+    }
+
+    /* === SECTION === */
+    section {
+      padding: 72px 0;
+      border-top: 1px solid var(--rule);
+    }
+    section h2 {
+      font-family: var(--sans);
+      font-size: clamp(28px, 3.5vw, 40px);
+      line-height: 1.08;
+      font-weight: 800;
+      letter-spacing: -0.022em;
+      margin: 0 0 20px;
+      max-width: 24ch;
+    }
+    section p.lead {
+      font-size: 18px;
+      line-height: 1.55;
+      color: var(--ink);
+      margin: 0 0 32px;
+      max-width: 64ch;
+    }
+    section p { margin: 0 0 16px; }
+
+    /* === PANE ROW === */
+    .panes {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 32px;
+      margin: 24px 0 0;
+    }
+    @media (min-width: 720px) {
+      .panes { grid-template-columns: repeat(3, 1fr); gap: 32px; }
+    }
+    .pane {
+      border: 1px solid var(--rule);
+      padding: 28px 24px;
+      background: var(--bg);
+    }
+    .pane .pane-label {
+      font-family: var(--mono);
+      font-size: 11px;
+      letter-spacing: 0.18em;
+      color: var(--accent-warm);
+      font-weight: 600;
+      text-transform: uppercase;
+      margin: 0 0 14px;
+    }
+    .pane h3 {
+      font-family: var(--sans);
+      font-size: 19px;
+      font-weight: 700;
+      letter-spacing: -0.012em;
+      margin: 0 0 8px;
+      color: var(--ink);
+      line-height: 1.2;
+    }
+    .pane p {
+      font-size: 15px;
+      line-height: 1.55;
+      color: var(--muted);
+      margin: 0;
+    }
+
+    /* === DIFFERENTIATORS === */
+    ol.differentiators {
+      list-style: none;
+      counter-reset: diff;
+      padding: 0;
+      margin: 24px 0 0;
+    }
+    ol.differentiators li {
+      counter-increment: diff;
+      padding: 24px 0 24px 64px;
+      border-bottom: 1px solid var(--rule);
+      position: relative;
+    }
+    ol.differentiators li:last-child { border-bottom: 0; }
+    ol.differentiators li::before {
+      content: counter(diff, decimal-leading-zero);
+      position: absolute;
+      left: 0;
+      top: 26px;
+      font-family: var(--mono);
+      font-size: 13px;
+      letter-spacing: 0.06em;
+      color: var(--accent-warm);
+      font-weight: 600;
+    }
+    ol.differentiators li h3 {
+      font-family: var(--sans);
+      font-size: 19px;
+      font-weight: 700;
+      letter-spacing: -0.012em;
+      margin: 0 0 6px;
+      color: var(--ink);
+    }
+    ol.differentiators li p {
+      font-size: 15px;
+      line-height: 1.6;
+      color: var(--muted);
+      margin: 0;
+      max-width: 72ch;
+    }
+
+    /* === SAMPLE OUTPUT BLOCK === */
+    .sample-set {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 24px;
+      margin: 32px 0 0;
+    }
+    @media (min-width: 720px) {
+      .sample-set { grid-template-columns: 1fr 1fr; }
+    }
+    .sample-card {
+      border: 1px solid var(--rule);
+      background: var(--bg);
+    }
+    .sample-card .sample-head {
+      padding: 14px 18px;
+      border-bottom: 1px solid var(--rule);
+      display: flex;
+      justify-content: space-between;
+      align-items: baseline;
+      font-family: var(--mono);
+      font-size: 11px;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+    }
+    .sample-card .sample-head .label { color: var(--accent-warm); font-weight: 600; }
+    .sample-card .sample-head .dims { color: var(--muted); }
+
+    .sample-card .sample-body {
+      padding: 32px 28px;
+      aspect-ratio: 1 / 1;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      gap: 16px;
+    }
+    .sample-card.og .sample-body {
+      aspect-ratio: 1200 / 675;
+      padding: 24px 28px;
+    }
+
+    .sample-body .mini-kicker {
+      font-family: var(--mono);
+      font-size: 10px;
+      letter-spacing: 0.18em;
+      color: var(--accent-warm);
+      font-weight: 600;
+      text-transform: uppercase;
+    }
+    .sample-body .mini-head {
+      font-family: var(--sans);
+      font-size: clamp(18px, 2.4vw, 28px);
+      line-height: 1.05;
+      font-weight: 800;
+      letter-spacing: -0.02em;
+      color: var(--ink);
+      margin: 0;
+    }
+    .sample-body .mini-swatches {
+      display: flex;
+      gap: 10px;
+    }
+    .sample-body .mini-chip {
+      width: 28px;
+      height: 28px;
+      border: 1px solid var(--rule);
+    }
+    .sample-body .mini-chip.c-bg { background: var(--bg); }
+    .sample-body .mini-chip.c-ink { background: var(--ink); }
+    .sample-body .mini-chip.c-warm { background: var(--accent-warm); }
+    .sample-body .mini-cta {
+      font-family: var(--mono);
+      font-size: 11px;
+      letter-spacing: 0.04em;
+      color: var(--ink);
+      font-weight: 600;
+    }
+    .sample-body .mini-cta::before { content: "→ "; color: var(--accent-warm); }
+
+    .sample-note {
+      font-family: var(--mono);
+      font-size: 12px;
+      color: var(--muted);
+      margin: 16px 0 0;
+      max-width: 64ch;
+    }
+    .sample-note a { color: var(--ink); }
+
+    /* === SETUP STEPS === */
+    ol.setup {
+      counter-reset: step;
+      list-style: none;
+      padding: 0;
+      margin: 24px 0 0;
+    }
+    ol.setup li {
+      counter-increment: step;
+      padding: 24px 0 24px 88px;
+      border-bottom: 1px solid var(--rule);
+      position: relative;
+    }
+    ol.setup li:last-child { border-bottom: 0; }
+    ol.setup li::before {
+      content: "STEP " counter(step, decimal-leading-zero);
+      position: absolute;
+      left: 0;
+      top: 26px;
+      font-family: var(--mono);
+      font-size: 12px;
+      letter-spacing: 0.12em;
+      color: var(--accent-warm);
+      font-weight: 600;
+    }
+    ol.setup li h3 {
+      font-family: var(--sans);
+      font-size: 18px;
+      font-weight: 700;
+      letter-spacing: -0.012em;
+      margin: 0 0 6px;
+      color: var(--ink);
+    }
+    ol.setup li p {
+      font-size: 15px;
+      line-height: 1.6;
+      color: var(--muted);
+      margin: 0 0 6px;
+      max-width: 72ch;
+    }
+
+    /* === CODE INSET === */
+    .code-inset {
+      background: var(--surface-deep);
+      color: var(--inset-ink);
+      font-family: var(--mono);
+      font-size: 13px;
+      line-height: 1.7;
+      padding: 24px 28px;
+      margin: 32px 0 0;
+      overflow-x: auto;
+      border-left: 3px solid var(--accent-warm);
+    }
+    .code-inset .label {
+      color: var(--accent-warm);
+      text-transform: uppercase;
+      letter-spacing: 0.18em;
+      font-size: 11px;
+      display: block;
+      margin-bottom: 14px;
+      font-weight: 600;
+    }
+    .code-inset .comment { color: #8a857a; }
+    .code-inset .prompt { color: var(--accent-warm); }
+
+    /* === PROOF BLOCK === */
+    .proof-placeholder {
+      background: var(--surface);
+      border: 1px dashed var(--rule);
+      padding: 32px 28px;
+      margin: 24px 0 0;
+      text-align: center;
+    }
+    .proof-placeholder p {
+      color: var(--muted);
+      margin: 0 0 8px;
+      font-size: 15px;
+    }
+    .proof-placeholder p:last-child { margin-bottom: 0; }
+    .proof-placeholder strong {
+      font-weight: 700;
+      color: var(--ink);
+    }
+
+    /* === FAQ === */
+    details.faq {
+      border-bottom: 1px solid var(--rule);
+      padding: 22px 0;
+    }
+    details.faq:first-of-type {
+      border-top: 1px solid var(--rule);
+    }
+    details.faq summary {
+      cursor: pointer;
+      font-family: var(--sans);
+      font-size: 17px;
+      font-weight: 700;
+      letter-spacing: -0.01em;
+      color: var(--ink);
+      list-style: none;
+      padding-right: 32px;
+      position: relative;
+    }
+    details.faq summary::-webkit-details-marker { display: none; }
+    details.faq summary::after {
+      content: "+";
+      position: absolute;
+      right: 0;
+      top: -3px;
+      font-family: var(--mono);
+      font-size: 22px;
+      color: var(--accent-warm);
+      font-weight: 400;
+    }
+    details.faq[open] summary::after { content: "−"; }
+    details.faq .answer {
+      padding-top: 14px;
+    }
+    details.faq .answer p {
+      font-size: 15px;
+      line-height: 1.6;
+      color: var(--ink);
+      margin: 0 0 10px;
+      max-width: 78ch;
+    }
+    details.faq .answer p:last-child { margin-bottom: 0; }
+
+    /* === FORWARD BLOCK === */
+    .forward {
+      background: var(--surface);
+      padding: 24px 28px;
+      margin: 24px 0 0;
+      border-left: 3px solid var(--rule);
+    }
+    .forward p {
+      font-size: 15px;
+      line-height: 1.6;
+      color: var(--muted);
+      margin: 0 0 8px;
+    }
+    .forward p:last-child { margin-bottom: 0; }
+    .forward strong {
+      color: var(--ink);
+      font-weight: 700;
+    }
+    .forward code {
+      font-family: var(--mono);
+      font-size: 0.92em;
+      background: var(--bg);
+      padding: 0.08em 0.4em;
+    }
+
+    /* === FOOTER === */
+    footer {
+      border-top: 1px solid var(--rule);
+      padding: 56px 0 64px;
+      margin-top: 32px;
+    }
+    footer .footer-inner {
+      max-width: var(--max);
+      margin: 0 auto;
+      padding: 0 32px;
+    }
+    footer .attribution {
+      font-family: var(--sans);
+      font-size: 15px;
+      font-weight: 700;
+      color: var(--ink);
+      margin: 0 0 24px;
+      letter-spacing: -0.01em;
+    }
+    footer .attribution .warm { color: var(--accent-warm); }
+    footer ul {
+      list-style: none;
+      padding: 0;
+      margin: 0 0 24px;
+      display: flex;
+      gap: 24px;
+      flex-wrap: wrap;
+      font-family: var(--mono);
+      font-size: 12px;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+    }
+    footer ul a {
+      color: var(--ink);
+      text-decoration: none;
+      border-bottom: 1px solid var(--rule);
+      padding-bottom: 2px;
+    }
+    footer ul a:hover {
+      color: var(--accent-warm);
+      border-bottom-color: var(--accent-warm);
+    }
+    footer .meta {
+      font-family: var(--mono);
+      font-size: 12px;
+      color: var(--muted);
+      margin: 0 0 6px;
+    }
+
+    /* Reduced motion */
+    @media (prefers-reduced-motion: reduce) {
+      html { scroll-behavior: auto; }
+    }
+  </style>
+</head>
+<body>
+
+<nav class="top">
+  <div class="nav-inner">
+    <a href="#top" class="brand">your-design-worker<span class="dot"></span></a>
+    <ul>
+      <li><a href="#what">What</a></li>
+      <li><a href="#sample">Sample</a></li>
+      <li><a href="#setup">Setup</a></li>
+      <li><a href="#faq">FAQ</a></li>
+      <li><a href="https://github.com/NFTYoginis/your-design-worker" class="cta">GitHub</a></li>
+    </ul>
+  </div>
+</nav>
+
+<main id="top">
+
+  <section class="hero">
+    <div class="grid">
+      <span></span><span></span><span></span><span></span>
+      <span></span><span></span><span></span><span></span>
+      <span></span><span></span><span></span><span></span>
+    </div>
+
+    <p class="specimen-label"><span class="num">02</span><span class="rule"></span>OPERATOR-STACK SERIES · REPO 2 OF 3</p>
+
+    <h1>A visual-asset Claude worker, <span class="warm">ICM-structured,</span> fork-ready.</h1>
+
+    <p class="standfirst">Dispatched a brief, produces self-contained HTML — social cards, OG cards, preview pages, diagrams — composed against a visual system you configure. Inline CSS only. No external fetches. MIT licensed.</p>
+
+    <div class="cta-row">
+      <a href="https://github.com/NFTYoginis/your-design-worker" class="cta-primary">View on GitHub</a>
+      <a href="#setup" class="cta-secondary">Five-minute setup</a>
+    </div>
+
+    <div class="hero-swatches">
+      <div class="swatch">
+        <div class="chip c-bg"></div>
+        <div class="hex">#f6f5f0</div>
+        <div class="token">--bg</div>
+      </div>
+      <div class="swatch">
+        <div class="chip c-ink"></div>
+        <div class="hex">#111111</div>
+        <div class="token">--ink</div>
+      </div>
+      <div class="swatch">
+        <div class="chip c-muted"></div>
+        <div class="hex">#6a6862</div>
+        <div class="token">--muted</div>
+      </div>
+      <div class="swatch">
+        <div class="chip c-warm"></div>
+        <div class="hex">#ff5436</div>
+        <div class="token">--accent-warm</div>
+      </div>
+      <div class="swatch">
+        <div class="chip c-cool"></div>
+        <div class="hex">#1f4dff</div>
+        <div class="token">--accent-cool</div>
+      </div>
+      <div class="swatch">
+        <div class="chip c-rule"></div>
+        <div class="hex">#d8d4c8</div>
+        <div class="token">--rule</div>
+      </div>
+    </div>
+  </section>
+
+  <section id="what">
+    <p class="specimen-label"><span class="num">03</span><span class="rule"></span>WHAT IT IS</p>
+    <h2>Brief-driven. Palette-configurable. HTML-first.</h2>
+    <p class="lead">A working Claude worker that does one thing: read a brief, read a visual-system file, produce self-contained HTML composed against that system. Fork the repo, edit one Markdown file, dispatch your first brief in under five minutes.</p>
+
+    <div class="panes">
+      <div class="pane">
+        <p class="pane-label">Brief-driven</p>
+        <h3>One brief, named dimensions, verbatim copy.</h3>
+        <p>Every dispatch starts with a six-section brief at <code>briefs/&lt;date&gt;-&lt;slug&gt;.md</code>. The brief names the artifact set, the pixel dimensions, and the copy text. The worker doesn't paraphrase.</p>
+      </div>
+      <div class="pane">
+        <p class="pane-label">Palette-configurable</p>
+        <h3>The visual system lives in one file.</h3>
+        <p>Palette, type, grid, density — all in <code>reference/visual-system.md</code>. Edit once. The worker reads it every dispatch and composes against it. No off-table colors. No font surprises.</p>
+      </div>
+      <div class="pane">
+        <p class="pane-label">HTML-first</p>
+        <h3>Source format, not delivery format.</h3>
+        <p>Artifacts ship as self-contained HTML — inline CSS, no external font fetches, no CDN dependencies. Rasterize to PNG with one shell command when a platform demands one. HTML stays editable.</p>
+      </div>
+    </div>
+
+    <div class="code-inset">
+<span class="label">A dispatch trigger looks like this</span><span class="comment"># In a fresh Claude session, after opening the repo folder:</span>
+<span class="prompt">&gt;</span> Read the brief at briefs/2026-05-14-focusblock-launch-visuals.md and execute.
+
+<span class="comment"># That's the entire dispatch. The worker handles the rest:</span>
+<span class="comment">#   1. Reads STATUS.md (first read)</span>
+<span class="comment">#   2. Reads the brief (the contract)</span>
+<span class="comment">#   3. Reads reference/visual-system.md (palette + type + grid)</span>
+<span class="comment">#   4. Runs the pre-flight checklist (5 items, grep-able)</span>
+<span class="comment">#   5. Produces the artifacts as self-contained HTML</span>
+<span class="comment">#   6. Self-verifies (dimensions, palette, contrast, zero external fetches)</span>
+<span class="comment">#   7. Updates STATUS.md (last write)</span>
+    </div>
+  </section>
+
+  <section id="why">
+    <p class="specimen-label"><span class="num">04</span><span class="rule"></span>WHY THIS ONE</p>
+    <h2>Five things this starter does that most don't.</h2>
+    <p>There are other Claude-worker starter kits. The differentiators below are the reasons this one exists. Each is enforced by the architecture, not by a README that hopes you'll remember.</p>
+
+    <ol class="differentiators">
+      <li>
+        <h3>ICM rigor</h3>
+        <p>The three always-relevant files — <code>CLAUDE.md</code>, <code>CONTEXT.md</code>, <code>STATUS.md</code> — plus identity, rules, examples, and reference. Not "a <code>CLAUDE.md</code> and hope." Structural, named, enforced.</p>
+      </li>
+      <li>
+        <h3>60-30-10 layer separation</h3>
+        <p>Infrastructure / Orchestration / AI, in the corrected definition. AI is the 10%; the other 90% lives in scripts, files, and declarative rules outside Claude. This worker's specific application: HTML is source, PNG is infrastructure — rasterization is one shell command, not an AI step.</p>
+      </li>
+      <li>
+        <h3>Brief-as-contract dispatch</h3>
+        <p>Clean role boundary between orchestrator and worker. The worker is meant to be called, not driven free-form. The brief is durable, audit-trail-friendly, and complete-or-refused — no "I'll do my best with what's missing."</p>
+      </li>
+      <li>
+        <h3>Pages-ready landing</h3>
+        <p>The repo IS its own marketing surface. Push it, enable GitHub Pages from the <code>/docs</code> folder, and a public URL goes live in sixty seconds. The page you're reading now is that file.</p>
+      </li>
+      <li>
+        <h3>Tied to a real article series</h3>
+        <p>The architecture is documented in the operator-AI series, starting with "I burned 800,000 tokens on one daily routine." Read the article, then the code. The two reinforce each other.</p>
+      </li>
+    </ol>
+  </section>
+
+  <section id="sample">
+    <p class="specimen-label"><span class="num">05</span><span class="rule"></span>SAMPLE OUTPUT</p>
+    <h2>One brief, three artifacts.</h2>
+    <p class="lead">The repo ships with one worked example. A six-section brief asks for a launch sequence for a focus-timer app called <em>FocusBlock</em>: a 1080×1080 social card, a 1200×675 OG card, and a 1280×900 preview page. The worker reads the brief, reads the default visual system, and produces all three artifacts as self-contained HTML.</p>
+
+    <div class="sample-set">
+      <div class="sample-card">
+        <div class="sample-head">
+          <span class="label">Social card</span>
+          <span class="dims">1080 × 1080</span>
+        </div>
+        <div class="sample-body">
+          <div>
+            <p class="mini-kicker">LAUNCH · v1.0</p>
+            <p class="mini-head">Schedule the focus.<br>Stop renting the willpower.</p>
+          </div>
+          <div class="mini-swatches">
+            <div class="mini-chip c-bg"></div>
+            <div class="mini-chip c-ink"></div>
+            <div class="mini-chip c-warm"></div>
+          </div>
+          <div class="mini-cta">focusblock.example/download</div>
+        </div>
+      </div>
+
+      <div class="sample-card og">
+        <div class="sample-head">
+          <span class="label">OG card</span>
+          <span class="dims">1200 × 675</span>
+        </div>
+        <div class="sample-body">
+          <div>
+            <p class="mini-kicker">LAUNCH · v1.0</p>
+            <p class="mini-head">Schedule the focus. Stop renting the willpower.</p>
+          </div>
+          <div class="mini-cta">focusblock.example/download</div>
+        </div>
+      </div>
+    </div>
+
+    <p class="sample-note">Full artifact set: <a href="https://github.com/NFTYoginis/your-design-worker/blob/main/examples/social-1080.html">social-1080.html</a> · <a href="https://github.com/NFTYoginis/your-design-worker/blob/main/examples/og-1200x675.html">og-1200x675.html</a> · <a href="https://github.com/NFTYoginis/your-design-worker/blob/main/examples/preview.html">preview.html</a> · paired brief + self-verification table in <a href="https://github.com/NFTYoginis/your-design-worker/blob/main/examples.md">examples.md</a>.</p>
+  </section>
+
+  <section id="proof">
+    <p class="specimen-label"><span class="num">06</span><span class="rule"></span>IN PRODUCTION</p>
+    <h2>Real-user receipts.</h2>
+    <p>This repo is a fresh release. Real-user receipts go in the block below once operators who fork it ship work with it.</p>
+
+    <div class="proof-placeholder">
+      <p><strong>Receipts pending.</strong></p>
+      <p>Forked this repo and shipped real work with it? Open an issue with a one-paragraph note on what you built and how the dispatch shape held up. Selected receipts will be quoted here verbatim, with consent.</p>
+      <!-- TODO: operator — replace placeholder with real receipts once forks start shipping in production. Never invent receipts. -->
+    </div>
+  </section>
+
+  <section id="setup">
+    <p class="specimen-label"><span class="num">07</span><span class="rule"></span>GET STARTED</p>
+    <h2>Five minutes from fork to first dispatch.</h2>
+
+    <ol class="setup">
+      <li>
+        <h3>Fork the repo</h3>
+        <p>Click Fork on the <a href="https://github.com/NFTYoginis/your-design-worker">GitHub page</a>, or clone directly: <code>git clone https://github.com/NFTYoginis/your-design-worker.git</code></p>
+      </li>
+      <li>
+        <h3>Open the folder in a Claude session</h3>
+        <p>Either Claude Code in the terminal, or a Claude Project with the folder uploaded. The worker reads <code>CLAUDE.md</code> as its entry point.</p>
+      </li>
+      <li>
+        <h3>Edit <code>reference/visual-system.md</code></h3>
+        <p>The repo ships with a working neutral default so the example dispatches as-is. Replace the default with your own palette tokens, typography stack, grid rules, and density conventions.</p>
+      </li>
+      <li>
+        <h3>Write your first brief</h3>
+        <p>Copy <code>briefs/_BRIEF-TEMPLATE.md</code> to <code>briefs/&lt;today&gt;-&lt;slug&gt;.md</code>. Fill the six sections — including pixel dimensions per artifact and verbatim copy. Keep it on one screen.</p>
+      </li>
+      <li>
+        <h3>Dispatch</h3>
+        <p>Paste this into the Claude session: <code>Read the brief at briefs/&lt;your-filename&gt;.md and execute.</code> The worker takes it from there.</p>
+      </li>
+    </ol>
+  </section>
+
+  <section id="faq">
+    <p class="specimen-label"><span class="num">08</span><span class="rule"></span>QUESTIONS</p>
+    <h2>What you'll want to know.</h2>
+
+    <details class="faq">
+      <summary>Why HTML and not PNG, JPG, or SVG?</summary>
+      <div class="answer">
+        <p>HTML is source. PNG is delivery. A hex code in HTML lives in one place — edit it once, the whole artifact updates. A hex code in a PNG is baked into pixel data; you re-render the whole thing to change it. HTML is also diffable (git history of an artifact is meaningful) and accessible (real text, screen-readable, indexable).</p>
+        <p>Rasterizing the worker's HTML output to a PNG when a platform demands one is one shell command (<code>chromium --headless --screenshot=… --window-size=W,H file.html</code>). That command is infrastructure, not AI. It runs from your terminal, your Makefile, or your CI.</p>
+      </div>
+    </details>
+
+    <details class="faq">
+      <summary>What's the difference between this and other ICM starter kits?</summary>
+      <div class="answer">
+        <p>Three things. First, the architecture enforces the orchestrator-worker boundary — most kits collapse both roles into one session and burn tokens accordingly. Second, the 60-30-10 layer framework is restated correctly (Infrastructure / Orchestration / AI), not as a context-budget split. Third, every repo ships with a Pages-ready landing page; push to GitHub, enable Pages from <code>/docs</code>, public URL in sixty seconds.</p>
+      </div>
+    </details>
+
+    <details class="faq">
+      <summary>Why is the visual-system file separate from the worker code?</summary>
+      <div class="answer">
+        <p>Because the visual system is the configurable part. The worker's job — read brief, read visual system, compose artifact — doesn't change when your brand palette changes. Keeping the system in <code>reference/visual-system.md</code> means you can fork once and re-skin the worker for different brands, different sub-brands, or different campaigns without touching anything in <code>rules.md</code> or <code>identity.md</code>.</p>
+      </div>
+    </details>
+
+    <details class="faq">
+      <summary>What does the worker refuse to do?</summary>
+      <div class="answer">
+        <p>Five named refusal gates in <code>rules.md</code>, each with verbatim refusal language. The big ones: empty visual-system configuration, missing brief preconditions, text-on-asset claims the brief doesn't ground (statistics, ratings, badges), third-party trademarked visual identity without consent confirmation, and high-harm domain imagery without explicit authorization. When a gate fires, the worker writes a question file at <code>briefs/questions/&lt;slug&gt;-question.md</code> and stops. It does not "do its best."</p>
+      </div>
+    </details>
+
+    <details class="faq">
+      <summary>Can the worker produce real PNG/JPG files, not just HTML?</summary>
+      <div class="answer">
+        <p>The worker does not. Rasterization is a deliberate role boundary — it's infrastructure, runs deterministically, doesn't need AI reasoning. You run it. One headless-browser command turns the worker's HTML into a PNG of any size. Doing rasterization in-loop would put the 10% AI layer in charge of pixel encoding, which is the opposite of what the architecture is trying to enforce.</p>
+      </div>
+    </details>
+
+    <details class="faq">
+      <summary>What if I need fonts that aren't in the system stack?</summary>
+      <div class="answer">
+        <p>Bundle the font file inside the repo and reference it locally with <code>@font-face</code> pointing at a relative path. The worker reads the visual-system file; if your typography table says <code>@font-face url('../assets/fonts/Suisse-Bold.woff2')</code>, that's what the artifact uses. No external CDN. No <code>fonts.googleapis.com</code>. Self-contained means self-contained.</p>
+      </div>
+    </details>
+
+    <details class="faq">
+      <summary>How does the worker handle a campaign that needs cross-artifact consistency?</summary>
+      <div class="answer">
+        <p>The visual-system file enforces it. The palette table, the typography stack, the grid rules — all centralized. When the brief asks for a social card, an OG card, and a story variant from one dispatch, the worker reads the same visual-system file three times and composes three artifacts that share palette, type, and grid by construction. Consistency lives in the configuration, not in the worker's memory.</p>
+      </div>
+    </details>
+
+    <details class="faq">
+      <summary>Is this affiliated with Anthropic or Claude?</summary>
+      <div class="answer">
+        <p>No. This is an independent project demonstrating one way to structure a Claude-based visual-asset worker. Claude is the model the worker runs on; the architecture and the opinions are this repo's.</p>
+      </div>
+    </details>
+  </section>
+
+  <section id="series">
+    <p class="specimen-label"><span class="num">09</span><span class="rule"></span>THE SERIES</p>
+    <h2>Two of three.</h2>
+    <p>This repo is the second in a three-repo operator-stack series, each demonstrating the same architecture in a different domain.</p>
+    <div class="forward">
+      <p><strong>your-content-worker</strong> — already shipped. Brief in, prose out. <a href="https://github.com/NFTYoginis/your-content-worker">github.com/NFTYoginis/your-content-worker</a></p>
+      <p><strong>your-design-worker</strong> — this one. Brief in, self-contained HTML artifacts out.</p>
+      <p><strong>your-animation-worker</strong> — next in the series. Brief in, voice-to-video MP4 out, via Remotion.</p>
+    </div>
+    <p style="margin-top: 24px; max-width: 64ch;">The architecture is documented in Article 1 of the operator-AI series: <em>I burned 800,000 tokens on one daily routine. Here's the architecture that killed it.</em> Read the article for the receipts; read this repo for the code that runs the fix.</p>
+  </section>
+
+</main>
+
+<footer>
+  <div class="footer-inner">
+    <p class="attribution">By Gabe <span class="warm">—</span> Your AI Specialist</p>
+    <ul>
+      <li><a href="https://github.com/NFTYoginis/your-design-worker">GitHub repo</a></li>
+      <li><a href="https://github.com/NFTYoginis/your-design-worker/issues">Open an issue</a></li>
+      <li><a href="https://github.com/NFTYoginis/your-design-worker/blob/main/LICENSE">MIT License</a></li>
+    </ul>
+    <p class="meta">MIT licensed. Fork it, edit it, ship it.</p>
+    <p class="meta">Article 1 of the operator-AI series link will be published here once the Medium URL is live.</p>
+    <p class="meta">Last updated: 2026-05-14.</p>
+  </div>
+</footer>
+
+</body>
+</html>

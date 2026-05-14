@@ -1,0 +1,235 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=1200, initial-scale=1">
+  <title>FocusBlock launch · OG 1200×675</title>
+  <style>
+    :root {
+      --bg: #f6f5f0;
+      --ink: #111111;
+      --muted: #6a6862;
+      --accent-warm: #ff5436;
+      --accent-cool: #1f4dff;
+      --rule: #d8d4c8;
+      --surface: #ecebd6;
+      --sans: system-ui, "Inter", "Helvetica Neue", Arial, sans-serif;
+      --mono: ui-monospace, "SF Mono", "JetBrains Mono", Menlo, monospace;
+    }
+
+    html, body { margin: 0; padding: 0; }
+
+    body {
+      width: 1200px;
+      height: 675px;
+      background: var(--bg);
+      color: var(--ink);
+      font-family: var(--sans);
+      position: relative;
+      overflow: hidden;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    .frame {
+      width: 100%;
+      height: 100%;
+      padding: 56px 64px;
+      box-sizing: border-box;
+      display: grid;
+      grid-template-columns: 1fr 280px;
+      grid-template-rows: auto 1fr auto;
+      gap: 32px 48px;
+      position: relative;
+    }
+
+    .grid-markers {
+      position: absolute;
+      top: 56px;
+      left: 64px;
+      width: calc(100% - 128px - 280px - 48px);
+      height: 320px;
+      pointer-events: none;
+      display: grid;
+      grid-template-columns: repeat(8, 1fr);
+    }
+    .grid-markers span {
+      border-left: 1px solid var(--rule);
+      height: 100%;
+    }
+    .grid-markers span:first-child { border-left-color: transparent; }
+
+    .kicker {
+      font-family: var(--mono);
+      font-size: 14px;
+      letter-spacing: 0.18em;
+      color: var(--accent-warm);
+      font-weight: 600;
+      text-transform: uppercase;
+      grid-column: 1;
+      z-index: 1;
+    }
+
+    .mark {
+      font-family: var(--sans);
+      font-size: 16px;
+      font-weight: 700;
+      letter-spacing: -0.01em;
+      color: var(--ink);
+      grid-column: 2;
+      justify-self: end;
+      z-index: 1;
+    }
+
+    .content {
+      grid-column: 1;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      gap: 24px;
+      z-index: 1;
+    }
+
+    .headline {
+      font-family: var(--sans);
+      font-size: 64px;
+      line-height: 1.04;
+      font-weight: 800;
+      letter-spacing: -0.025em;
+      color: var(--ink);
+      margin: 0;
+    }
+
+    .sub {
+      font-family: var(--sans);
+      font-size: 18px;
+      line-height: 1.5;
+      color: var(--muted);
+      margin: 0;
+      max-width: 580px;
+    }
+
+    .specimen-strip {
+      grid-column: 2;
+      grid-row: 2;
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+      justify-content: center;
+      z-index: 1;
+    }
+
+    .specimen-strip .swatch {
+      display: grid;
+      grid-template-columns: 64px 1fr;
+      gap: 16px;
+      align-items: center;
+    }
+
+    .specimen-strip .chip {
+      width: 64px;
+      height: 64px;
+      border: 1px solid var(--rule);
+    }
+
+    .specimen-strip .chip.bg { background: var(--bg); }
+    .specimen-strip .chip.ink { background: var(--ink); }
+    .specimen-strip .chip.warm { background: var(--accent-warm); }
+
+    .specimen-strip .label {
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+    }
+
+    .specimen-strip .hex {
+      font-family: var(--mono);
+      font-size: 14px;
+      color: var(--ink);
+      font-weight: 600;
+    }
+
+    .specimen-strip .token {
+      font-family: var(--mono);
+      font-size: 12px;
+      letter-spacing: 0.04em;
+      color: var(--muted);
+    }
+
+    .footer {
+      grid-column: 1 / -1;
+      display: flex;
+      justify-content: space-between;
+      align-items: baseline;
+      border-top: 1px solid var(--rule);
+      padding-top: 20px;
+      z-index: 1;
+    }
+
+    .footer .cta {
+      font-family: var(--mono);
+      font-size: 16px;
+      color: var(--ink);
+      font-weight: 600;
+      letter-spacing: 0.02em;
+    }
+
+    .footer .cta::before {
+      content: "→ ";
+      color: var(--accent-warm);
+    }
+
+    .footer .meta {
+      font-family: var(--mono);
+      font-size: 12px;
+      letter-spacing: 0.12em;
+      color: var(--muted);
+      text-transform: uppercase;
+    }
+  </style>
+</head>
+<body>
+  <div class="grid-markers">
+    <span></span><span></span><span></span><span></span>
+    <span></span><span></span><span></span><span></span>
+  </div>
+
+  <div class="frame">
+    <div class="kicker">LAUNCH · v1.0</div>
+    <div class="mark">FocusBlock</div>
+
+    <div class="content">
+      <h1 class="headline">Schedule the focus. Stop renting the willpower.</h1>
+      <p class="sub">A focus-timer that learns your energy patterns and books focus on your calendar.</p>
+    </div>
+
+    <div class="specimen-strip">
+      <div class="swatch">
+        <div class="chip bg"></div>
+        <div class="label">
+          <div class="hex">#f6f5f0</div>
+          <div class="token">--bg</div>
+        </div>
+      </div>
+      <div class="swatch">
+        <div class="chip ink"></div>
+        <div class="label">
+          <div class="hex">#111111</div>
+          <div class="token">--ink</div>
+        </div>
+      </div>
+      <div class="swatch">
+        <div class="chip warm"></div>
+        <div class="label">
+          <div class="hex">#ff5436</div>
+          <div class="token">--accent-warm</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="footer">
+      <div class="cta">focusblock.example/download</div>
+      <div class="meta">macOS · Windows · Linux</div>
+    </div>
+  </div>
+</body>
+</html>

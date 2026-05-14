@@ -1,0 +1,201 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=1080, initial-scale=1">
+  <title>FocusBlock launch · social 1080×1080</title>
+  <style>
+    :root {
+      --bg: #f6f5f0;
+      --ink: #111111;
+      --muted: #6a6862;
+      --accent-warm: #ff5436;
+      --accent-cool: #1f4dff;
+      --rule: #d8d4c8;
+      --surface: #ecebd6;
+      --sans: system-ui, "Inter", "Helvetica Neue", Arial, sans-serif;
+      --mono: ui-monospace, "SF Mono", "JetBrains Mono", Menlo, monospace;
+    }
+
+    html, body { margin: 0; padding: 0; }
+
+    body {
+      width: 1080px;
+      height: 1080px;
+      background: var(--bg);
+      color: var(--ink);
+      font-family: var(--sans);
+      position: relative;
+      overflow: hidden;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    .frame {
+      width: 100%;
+      height: 100%;
+      padding: 64px;
+      box-sizing: border-box;
+      display: grid;
+      grid-template-rows: auto 1fr auto auto auto;
+      gap: 32px;
+      position: relative;
+    }
+
+    /* Faint grid markers — col edges in upper band */
+    .grid-markers {
+      position: absolute;
+      top: 64px;
+      left: 64px;
+      right: 64px;
+      height: 440px;
+      pointer-events: none;
+      display: grid;
+      grid-template-columns: repeat(12, 1fr);
+    }
+    .grid-markers span {
+      border-left: 1px solid var(--rule);
+      height: 100%;
+    }
+    .grid-markers span:first-child { border-left-color: transparent; }
+
+    .kicker {
+      font-family: var(--mono);
+      font-size: 18px;
+      letter-spacing: 0.18em;
+      color: var(--accent-warm);
+      font-weight: 600;
+      text-transform: uppercase;
+      z-index: 1;
+    }
+
+    .headline {
+      font-family: var(--sans);
+      font-size: 88px;
+      line-height: 1.02;
+      font-weight: 800;
+      letter-spacing: -0.025em;
+      color: var(--ink);
+      margin: 0;
+      max-width: 920px;
+      z-index: 1;
+    }
+
+    .swatches {
+      display: flex;
+      gap: 32px;
+      align-items: flex-start;
+      z-index: 1;
+      margin-top: 8px;
+    }
+
+    .swatch {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    .swatch .chip {
+      width: 96px;
+      height: 96px;
+      border: 1px solid var(--rule);
+    }
+
+    .swatch .chip.bg { background: var(--bg); }
+    .swatch .chip.ink { background: var(--ink); }
+    .swatch .chip.warm { background: var(--accent-warm); }
+
+    .swatch .meta {
+      font-family: var(--mono);
+      font-size: 13px;
+      letter-spacing: 0.04em;
+      color: var(--muted);
+      line-height: 1.4;
+    }
+
+    .swatch .hex {
+      font-family: var(--mono);
+      font-size: 14px;
+      color: var(--ink);
+      font-weight: 600;
+    }
+
+    .sub {
+      font-family: var(--sans);
+      font-size: 22px;
+      line-height: 1.45;
+      color: var(--muted);
+      max-width: 680px;
+      margin: 0;
+      z-index: 1;
+    }
+
+    .footer {
+      display: flex;
+      justify-content: space-between;
+      align-items: baseline;
+      border-top: 1px solid var(--rule);
+      padding-top: 24px;
+      z-index: 1;
+    }
+
+    .footer .cta {
+      font-family: var(--mono);
+      font-size: 18px;
+      color: var(--ink);
+      font-weight: 600;
+      letter-spacing: 0.02em;
+    }
+
+    .footer .cta::before {
+      content: "→ ";
+      color: var(--accent-warm);
+    }
+
+    .footer .mark {
+      font-family: var(--sans);
+      font-size: 20px;
+      font-weight: 700;
+      letter-spacing: -0.015em;
+      color: var(--ink);
+    }
+  </style>
+</head>
+<body>
+  <div class="grid-markers">
+    <span></span><span></span><span></span><span></span>
+    <span></span><span></span><span></span><span></span>
+    <span></span><span></span><span></span><span></span>
+  </div>
+
+  <div class="frame">
+    <div class="kicker">LAUNCH · v1.0</div>
+
+    <h1 class="headline">Schedule the focus.<br>Stop renting the willpower.</h1>
+
+    <div class="swatches">
+      <div class="swatch">
+        <div class="chip bg"></div>
+        <div class="hex">#f6f5f0</div>
+        <div class="meta">--bg</div>
+      </div>
+      <div class="swatch">
+        <div class="chip ink"></div>
+        <div class="hex">#111111</div>
+        <div class="meta">--ink</div>
+      </div>
+      <div class="swatch">
+        <div class="chip warm"></div>
+        <div class="hex">#ff5436</div>
+        <div class="meta">--accent-warm</div>
+      </div>
+    </div>
+
+    <p class="sub">A focus-timer that learns your energy patterns and books focus on your calendar.</p>
+
+    <div class="footer">
+      <div class="cta">focusblock.example/download</div>
+      <div class="mark">FocusBlock</div>
+    </div>
+  </div>
+</body>
+</html>
