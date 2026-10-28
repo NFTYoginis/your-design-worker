@@ -2,7 +2,7 @@
 
 A visual-asset Claude worker, ICM-structured, fork-ready. Dispatched a brief, produces self-contained HTML artifacts — social cards, OG cards, preview pages, diagrams — composed against a visual system you configure. MIT licensed.
 
-Live landing page (once you've pushed and enabled Pages): `https://<your-username>.github.io/your-design-worker/`
+Live landing page: https://nftyoginis.github.io/your-design-worker/ (a fork gets its own at `https://<your-username>.github.io/your-design-worker/` once you enable Pages, below).
 
 ---
 
@@ -16,7 +16,7 @@ There are other Claude-worker starter kits. This one is opinionated about five t
 4. **Pages-ready landing.** Every repo IS its own marketing surface. Push it, enable GitHub Pages from `/docs`, public URL in sixty seconds.
 5. **Tied to a real article series.** The architecture is documented in the operator-AI series, starting with "I burned 800,000 tokens on one daily routine." Read the article for the receipts; read this repo for the code that runs the fix.
 
-The article: [Article 1 — destination TBD]. Update this link once the Medium URL is live.
+The article: [I Burned 800,000 Tokens on One Daily Routine](https://thequietai.com/writing/token-burn-daily-routine).
 
 ---
 
@@ -201,7 +201,7 @@ The animation repo's cross-link will be added here once it ships.
 
 The architecture is documented in:
 
-- **Article 1** — "I burned 800,000 tokens on one daily routine. Here's the architecture that killed it." [Medium URL TBD]
+- **Article 1** — "I burned 800,000 tokens on one daily routine. Here's the architecture that killed it." ([read it](https://thequietai.com/writing/token-burn-daily-routine))
 
 Future articles will link from this section as they publish.
 
